@@ -1,0 +1,56 @@
+<section>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h3 class="text-center mb-4 text-primary">Edit Product</h3>
+            <form action="/admin/edit-product/{{product._id}}" method="POST" enctype="multipart/form-data">
+              
+              <div class="mb-3">
+                <label for="Name" class="form-label">Product Name</label>
+                <input type="text" name="Name" id="Name" class="form-control" value="{{product.Name}}" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="Category" class="form-label">Category</label>
+                <input type="text" name="Category" id="Category" class="form-control" value="{{product.Category}}" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="Price" class="form-label">Price</label>
+                <input type="text" name="Price" id="Price" class="form-control" value="{{product.Price}}" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="Description" class="form-label">Description</label>
+                <input type="text" name="Description" id="Description" class="form-control" value="{{product.Description}}" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="image" class="form-label">Current Image</label><br>
+                <img src="/product-images/{{product._id}}.jpg" style="max-width: 200px; height: 200px;" class="mb-2 rounded shadow-sm" alt="Product Image" id="imageView">
+              </div>
+
+              <div class="mb-3">
+                <label for="image" class="form-label">Change Image</label>
+                <input type="file" name="image" id="image" class="form-control" onchange="viewImage(event)">
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success">Submit</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function viewImage(event){
+    document.getElementById('imageView').src = URL.createObjectURL(event.target.files[0]);
+  }
+</script>

@@ -1,0 +1,76 @@
+<div class="container my-5">
+  <div class="row g-4">
+    
+    <!-- Delivery Details Form -->
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm border-0">
+        <h4 class="mb-4 text-primary"><i class="bi bi-truck me-2"></i>Delivery Details</h4>
+        <form action="/place-order" method="POST" id="checkout-form">
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" name="address" id="address" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input type="text" class="form-control" name="pincode" id="pincode" required>
+          </div>
+          <div class="mb-3">
+            <label for="mobile" class="form-label">Mobile</label>
+            <input type="text" class="form-control" name="mobile" id="mobile" required>
+          </div>
+          <input type="hidden" name="userId" value="{{user._id}}">
+          <input type="hidden" name="proId" value="{{product._id}}">
+      </div>
+    </div>
+
+    <!-- Payment & Summary -->
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm border-0">
+        <h4 class="mb-4 text-success"><i class="bi bi-currency-rupee me-2"></i>Order Summary</h4>
+        <h5 class="mb-3">Total: <span class="text-dark fw-bold">₹{{total}}</span></h5>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="payment-method" value="COD" id="cod" checked>
+          <label class="form-check-label" for="cod">
+            <i class="bi bi-cash-coin me-1"></i> Cash on Delivery
+          </label>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="payment-method" value="Online" id="online">
+          <label class="form-check-label" for="online">
+            <i class="bi bi-credit-card-2-front me-1"></i> Online Payment
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-success  mt-2">
+           Place Order
+        </button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#checkout-form').submit(function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: '/place-order',
+    method: 'post',
+    data: $(this).serialize(),
+    success: function (response) {
+      alert(response.message || "Order placed successfully!");
+      // Optionally redirect:
+      // window.location.href = "/order-success";
+      if(response.status){
+        location.href='/order-success'
+      }
+    },
+    error:function(){
+      alert('something went wrong while placing order')
+    }
+  });
+});
+
+</script>

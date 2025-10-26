@@ -1,0 +1,132 @@
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="mb-4 text-center fw-bold">Your Shopping Cart</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle shadow-sm bg-white rounded-4">
+        <thead class="table-success text-center">
+          <tr>
+            <th>Item</th>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          {{#each product}}
+          <tr id="product-row-{{this.product._id}}">
+            <td>
+              <img src="/product-images/{{this.product._id}}.jpg" class="rounded" style="width: 70px; height: 70px;" alt="">
+            </td>
+            <td class="fw-medium">{{this.product.Name}}</td>
+            <td class="text-success fw-bold">₹{{this.product.Price}}</td>
+            <td>
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}', -1)">−</button>
+                <span id="{{this.product._id}}" class="px-2">{{this.quantity}}</span>
+                <button class="btn btn-outline-secondary btn-sm" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}', 1)">+</button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="removeProduct('{{this.product._id}}')">
+                <i class="bi bi-trash-fill me-1"></i> Remove
+              </button>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4 text-end pe-2">
+  <h5>Total Price: <span id="total" class="text-success fw-bold">₹{{totalValue}}</span></h5>
+  <a href="/place-order" class="btn btn-success  mt-2">
+    <i class="bi bi-truck me-1"></i> Place Order
+  </a>
+</div>
+
+  </div>
+</section>
+
+<script>
+function removeProduct(productId) {
+  $.ajax({
+    url: '/remove-product-from-cart',
+    method: 'POST',
+    data: { productId: productId },
+    success: (response) => {
+      if (response.status) {
+        alert('Product removed successfully.');
+
+        // Update total price dynamically
+        document.getElementById('total').innerText = response.total;
+
+        // Remove the product row from the table (find by productId)
+        // Assuming your product rows have an id like "product-row-<productId>"
+        let row = document.getElementById('product-row-' + productId);
+        if (row) {
+          row.remove();
+        }
+      } else {
+        alert('Failed to remove product from cart.');
+      }
+    }
+  });
+}
+
+
+ function changeQuantity(cartId, proId,userId, count) {
+  let quantity = parseInt(document.getElementById(proId).innerHTML);
+  count = parseInt(count);
+
+  $.ajax({
+    url: '/change-product-quantity',
+    data: {
+      user:userId,
+      cart: cartId,
+      product: proId,
+      count: count,
+      quantity: quantity
+    },
+    method: 'post',
+    success: (response) => {
+      if (response.removeProduct) {
+        // ✅ Product was removed because quantity reached 0
+        location.reload();
+      } else if (response.status) {
+        // ✅ Quantity updated successfully
+        document.getElementById(proId).innerHTML = quantity + count
+        document.getElementById('total').innerHTML=response.total
+      } else {
+        //  Something went wrong
+        alert('Failed to update quantity');
+      }
+    }
+  });
+}
+function updateCartCount() {
+  $.ajax({
+    url: '/cart-count',
+    method: 'GET',
+    success: (response) => {
+      $('#cart-count').html(response.count);
+    },
+    error: (err) => {
+      console.error('Failed to fetch cart count:', err);
+    }
+  });
+}
+
+$(document).ready(() => {
+  updateCartCount();
+});
+
+// Handle browser back button caching issues with pageshow event
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    updateCartCount();
+  }
+});
+
+
+</script>

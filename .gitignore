@@ -1,3 +1,4 @@
+
 # Logs
 logs
 *.log
@@ -137,3 +138,27 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Optional build folders
+dist/
+build/
+
+# Temporary or backup folders/files
+config copy/
+LU/
+A/
+Name/
+
+# IDE or system files
+.vscode/
+.idea/
+ 086021d (Initial commit: finished project)
